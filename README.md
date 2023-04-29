@@ -46,6 +46,7 @@ To run:
 1. Install requirements ```pip install -r requirements.txt```
 2. Run server.py.
 3. After first run, edit `settings.json` to fill params (especially kobold_url to target correct Kobold Server)
+4. In Kobold Client use proxy path to use proxy (like `http://127.0.0.1:5020/`, where this proxy server is located)
 
 ## Core settings description
 
