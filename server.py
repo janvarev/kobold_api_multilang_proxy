@@ -14,12 +14,17 @@ params = {
     'kobold_url': "http://localhost:5001", # kobold API that we proxy
     'translator': 'GoogleTranslator', # GoogleTranslator or OneRingTranslator.
     'user_lang': '', # user language two-letters code like "fr", "es" etc.
-    'custom_url': "http://127.0.0.1:4990/" # custom url for OneRingTranslator server
+    'custom_url': "http://127.0.0.1:4990/", # custom url for OneRingTranslator server
+    'translate_user_input': True, # translate user input to EN
+    'translate_system_output': True, # translate system output to UserLang
+    'is_listen': False, # true: public interface (0.0.0.0), false: only local interface (localhost, 127.0.0.1)
 }
 
 cache_en_translation:dict[str,str] = {"":"","<START>":"<START>"}
 #en_not_translate:dict[str,str] = {}
 def translator_main(string,from_lang:str,to_lang:str) -> str:
+    if from_lang == to_lang: return string
+
     from deep_translator import GoogleTranslator
     res = ""
     if params['translator'] == "GoogleTranslator":
@@ -95,7 +100,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
             # running advanced translation logic
-            if params["is_advanced_translation"]:
+            if params["is_advanced_translation"] and params["translate_user_input"]:
 
                 stat_miss = 0
                 for i in range(len(prompt_lines)):
@@ -129,7 +134,7 @@ class Handler(BaseHTTPRequestHandler):
             answer = response["results"][0]['text']
 
 
-            if params["is_advanced_translation"]:
+            if params["is_advanced_translation"] and params["translate_system_output"]:
                 print("is_advanced_translation original answer:", answer )
                 answer_lines_orig = [k.strip() for k in answer.split('\n')]
                 answer_lines = copy.deepcopy(answer_lines_orig)
@@ -189,7 +194,7 @@ def setup():
     load_cache_en()
     print("Loaded Cache_en length: {0}".format(len(cache_en_translation)))
     #Thread(target=run_server, daemon=True).start()
-    run_server()
+    run_server(params.get("is_listen"))
 
 
 # settings etc

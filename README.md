@@ -1,14 +1,38 @@
 # Kobold API Proxy translation server
 
-Allow you to use KoboldAI API on your UserLanguage.
+Proxy server that allow you to use KoboldAI API on your UserLanguage.
 
 **Provide advanced logic to auto-translate income prompts:**
-- Due to advanced logic script splits income prompt by lines, and cache translation results
+Due to advanced logic script splits income prompt by lines, and cache translation results.
  
-
 Features:
 - **Text quality feature:** when it generate English response, it cache it too (so you don't do double-translation English->UserLang->English next time)
-- **Multi translation engines**. You can setup your own translator, if you want (throw OneRingTranslator option) 
+- **Multi translation engines**. You can setup your own translator, if you want (throw OneRingTranslator option)
+
+Contra:
+- Doesn't support streaming mode (at least, yet)
+
+_Tested at least on koboldcpp KoboldAPI interface._
+
+## How does it work?
+
+Classically, you work with Kobold API that way:
+```mermaid
+sequenceDiagram
+    Kobold Client->>Kobold Server: Request to generate text
+    Kobold Server->>Kobold Client: Response
+```
+
+If you use kobold_api_multilang_proxy, it will be that way:
+```mermaid
+sequenceDiagram
+    Kobold Client->>kobold_api_multilang_proxy: Request to generate text
+    kobold_api_multilang_proxy->>kobold_api_multilang_proxy: Translate your query to English
+    kobold_api_multilang_proxy->>Kobold Server: Request to generate text on English lang
+    Kobold Server->>kobold_api_multilang_proxy: Response on English
+    kobold_api_multilang_proxy->>kobold_api_multilang_proxy: Translate response to your UserLang (optionally)
+    kobold_api_multilang_proxy->>Kobold Client: Response on your UserLang
+```
 
 ## One-click installer for Windows
 
@@ -19,6 +43,7 @@ to be done
 To run: 
 1. Install requirements ```pip install -r requirements.txt```
 2. Run server.py.
+3. After first run, edit `settings.json` to fill params (especially kobold_url to target correct Kobold Server)
 
 ## Core settings description
 
@@ -26,50 +51,15 @@ Located in `settings.json` after first run.
 
 ```python
 {
-  "port": 5020, # port for
-  "is_advanced_translation": true,
-  "kobold_url": "http://localhost:5001",
-  "translator": "GoogleTranslator",
-  "user_lang": "ru"
+    'port': 5020, # port for connect
+    'is_advanced_translation': True, # usually always use advanced translation
+    'kobold_url': "http://localhost:5001", # kobold API that we proxy
+    'translator': 'GoogleTranslator', # GoogleTranslator or OneRingTranslator.
+    'user_lang': '', # user language two-letters code like "fr", "es" etc.
+    'custom_url': "http://127.0.0.1:4990/", # custom url for OneRingTranslator server
+    'translate_user_input': True, # translate user input to EN
+    'translate_system_output': True, # translate system output to UserLang
+    'is_listen': False, # true: public interface (0.0.0.0), false: only local interface (localhost, 127.0.0.1)
 },
 ```
 
-## API example usage
-
-Translate from en to fr
-```
-http://127.0.0.1:4990/translate?text=Hi%21&from_lang=en&to_lang=fr
-```
-
-Translate from en to user language (user language defines in plugins/core.json)
-```
-http://127.0.0.1:4990/translate?text=Hi%21&from_lang=en&to_lang=user
-```
-
-Full Python usage example:
-```python
-custom_url = params['custom_url']
-if custom_url == "":
-    res = "Please, setup custom_url for OneRingTranslator (usually http://127.0.0.1:4990/)"
-else:
-    import requests
-    response_orig = requests.get(f"{custom_url}translate", params={"text":string,"from_lang":from_lang,"to_lang":to_lang})
-    if response_orig.status_code == 200:
-        response = response_orig.json()
-        #print("OneRingTranslator result:",response)
-
-        if response.get("error") is not None:
-            print(response)
-            res = "ERROR: "+response.get("error")
-        elif response.get("result") is not None:
-            res = response.get("result")
-        else:
-            print(response)
-            res = "Unknown result from OneRingTranslator"
-    elif response_orig.status_code == 404:
-        res = "404 error: can't find endpoint"
-    elif response_orig.status_code == 500:
-        res = "500 error: OneRingTranslator server error"
-    else:
-        res = f"{response_orig.status_code} error"
-```
