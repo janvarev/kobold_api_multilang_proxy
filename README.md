@@ -38,7 +38,7 @@ So, proxy will work with ANY Kobold Client and Kobold Server (in most cases).
 
 ## One-click installer for Windows
 
-to be done
+https://github.com/janvarev/kobold_api_multilang_proxy_win_installer
 
 ## Install and run
 
