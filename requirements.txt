@@ -1,0 +1,5 @@
+# Translation
+deep_translator
+
+
+termcolor
