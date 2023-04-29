@@ -1,6 +1,6 @@
 # Kobold API Proxy translation server
 
-Proxy server that allow you to use KoboldAI API on your UserLanguage.
+**Proxy server that allow you to use KoboldAI API on your UserLanguage.**
 
 **Provide advanced logic to auto-translate income prompts:**
 Due to advanced logic script splits income prompt by lines, and cache translation results.
