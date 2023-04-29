@@ -34,6 +34,8 @@ sequenceDiagram
     kobold_api_multilang_proxy->>Kobold Client: Response on your UserLang
 ```
 
+So, proxy will work with ANY Kobold Client and Kobold Server (in most cases).
+
 ## One-click installer for Windows
 
 to be done
