@@ -48,6 +48,10 @@ To run:
 3. After first run, edit `settings.json` to fill params (especially kobold_url to target correct Kobold Server)
 4. In Kobold Client use proxy path to use proxy (like `http://127.0.0.1:5020/`, where this proxy server is located)
 
+Example for SillyTavern Kobold Client:
+![image](https://user-images.githubusercontent.com/18393788/235944322-840a8135-6b22-47df-b457-e939315dab1e.png)
+
+
 ## Core settings description
 
 Located in `settings.json` after first run.
