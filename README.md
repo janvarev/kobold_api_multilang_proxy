@@ -7,7 +7,7 @@ Due to advanced logic script splits income prompt by lines, and cache translatio
  
 Features:
 - **Text quality feature:** when it generate English response, it cache it too (so you don't do double-translation English->UserLang->English next time)
-- **Multi translation engines**. You can setup your own translator, if you want (throw OneRingTranslator option)
+- **Multi translation engines**. You can setup your own translator, if you want (throw [OneRingTranslator](https://github.com/janvarev/OneRingTranslator)  option)
 
 Contra:
 - Doesn't support streaming mode (at least, yet)
